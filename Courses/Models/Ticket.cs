@@ -14,6 +14,7 @@ namespace Courses.Models
         public TimeOnly BeginningDate { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
+        public Concert? Concert { get; set; }
 
     }
 }
