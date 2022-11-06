@@ -11,6 +11,7 @@ namespace Courses.Models
         public Guid Id { get; set; }
         public string Title { get; set; } = String.Empty;
         public string Artist { get; set; } = String.Empty;
+        public EventType EventType { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
         public List<Ticket> Tickets { get; set; } = new();
