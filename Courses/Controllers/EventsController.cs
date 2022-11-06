@@ -8,6 +8,7 @@ using Courses.ViewModels;
 using AutoMapper;
 using Courses.Models;
 using Courses.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Courses.Controllers
 {
@@ -44,11 +45,25 @@ namespace Courses.Controllers
         {
             var mapped = _mapper.Map<Concert>(viewModel);
             mapped.CreatedDate = DateTime.Now;
+            mapped.UpdatedDate = mapped.CreatedDate;
             await _context.Concerts.AddAsync(mapped);
             await _context.SaveChangesAsync();
+            return Redirect("/Events/AddTikets/");
+        }
 
-            //TODO: add logic for adding tickets to DB acc to Tickets number
+        [HttpGet]
+        public IActionResult AddTickets()
+        {
+            //TODO: Add view for this action
+            throw new NotImplementedException();
+            return View();
+        }
 
+        [HttpPost]
+        public IActionResult AddTickets(AddTicketsViewModel viewModel)
+        {
+            //TODO: add logic for creating new ticket
+            throw new NotImplementedException();
             return Redirect("/Events/Index/");
         }
 

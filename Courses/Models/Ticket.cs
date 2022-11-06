@@ -11,7 +11,7 @@ namespace Courses.Models
         public Guid Id { get; set; }
         public Guid ConcertId { get; set; }
         public string Place { get; set; } = String.Empty;
-        public DateTime BeginningDate { get; set; }
+        public DateTime Date { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
         public Concert? Concert { get; set; }
