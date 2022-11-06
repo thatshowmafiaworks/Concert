@@ -1,1 +1,37 @@
-﻿
+﻿@{
+    ViewBag.Title = "Create new Concert";
+    ViewBag.SelectType = new EventType();
+}
+@using Courses.Models;
+@model Courses.ViewModels.CreateConcertViewModel;
+
+<h2>Create new Event</h2>
+
+<form asp-action="Create" asp-controller="Events" asp-antiforgery="true">
+    <div>
+        <p>
+            <label asp-for="Title"></label><br />
+            <input type="text" asp-for="Title"/>
+        </p>
+        <p>
+            <label asp-for="Artist"></label><br />
+            <input type="text" asp-for="Artist" />
+        </p>
+        <p>
+            <label asp-for="Description"></label><br />
+            <textarea asp-for="Description"></textarea>
+        </p>
+        <p>
+            <label asp-for="SeatsNumber"></label><br />
+            <input type="number" asp-for="SeatsNumber"/>
+        </p>
+        <p>
+            <label asp-for="EventType"></label><br />
+            <select asp-for="EventType" asp-items="Html.GetEnumSelectList<EventType>()"></select>
+        </p>
+        <p>
+            <input type="submit" value="Create" />
+        </p>
+    </div>
+
+</form>

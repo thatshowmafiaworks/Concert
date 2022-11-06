@@ -34,6 +34,6 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name : "events",
-    pattern: "{controller=Events}/{action=Index}/{*path?}");
+    pattern: "{controller=Events}/{action=Index}/{param?}");
 
 app.Run();
