@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "Add tickets for concert";
+}
+@using Courses.Models;
+@model Courses.ViewModels.AddTicketsViewModel;
+
+<h2>Add tickets for concert</h2>
+
+<form asp-action="AddTickets" asp-controller="Events" asp-antiforgery="true">
+    <div>
+        <p>
+            <label asp-for="ConcertId"></label><br />
+            <select asp-for="ConcertId" asp-items="ViewBag.concerts"></select>
+        </p>
+        <p>
+            <label asp-for="Day"></label><br />
+            <input type="date" asp-for="Day" />
+        </p>
+        <p>
+            <label asp-for="Time"></label><br />
+            <input type="time" asp-for="Time" />
+        </p>
+        
+        <p>
+            <input type="submit" value="Create" />
+        </p>
+    </div>
+
+</form>
