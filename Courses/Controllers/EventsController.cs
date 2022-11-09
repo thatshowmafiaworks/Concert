@@ -9,6 +9,7 @@ using AutoMapper;
 using Courses.Models;
 using Courses.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Courses.Controllers
 {
@@ -48,22 +49,37 @@ namespace Courses.Controllers
             mapped.UpdatedDate = mapped.CreatedDate;
             await _context.Concerts.AddAsync(mapped);
             await _context.SaveChangesAsync();
-            return Redirect("/Events/AddTikets/");
+            return Redirect("/Events/AddTickets/");
         }
 
         [HttpGet]
         public IActionResult AddTickets()
         {
-            //TODO: Add view for this action
-            throw new NotImplementedException();
+            var events = _context.Concerts.ToList();
+            ViewBag.concerts = new SelectList(events,"Id","Title");
             return View();
         }
 
         [HttpPost]
         public IActionResult AddTickets(AddTicketsViewModel viewModel)
         {
-            //TODO: add logic for creating new ticket
-            throw new NotImplementedException();
+            DateOnly day = DateOnly.FromDateTime(viewModel.Day);
+            TimeOnly time = TimeOnly.FromDateTime(viewModel.Time);
+
+            var mapped = _mapper.Map<Ticket>(viewModel);
+
+            mapped.Date = day.ToDateTime(time);
+            mapped.CreatedDate = DateTime.Now;
+            mapped.UpdatedDate = mapped.CreatedDate;
+
+            var seatsNumber = _context.Concerts.FirstOrDefault(item => item.Id == mapped.ConcertId).SeatsNumber;
+
+            for(int i = 0; i < seatsNumber; i++)
+            {
+                mapped.Id = Guid.NewGuid();
+                _context.Tickets.Add(mapped);
+                _context.SaveChanges();
+            }
             return Redirect("/Events/Index/");
         }
 

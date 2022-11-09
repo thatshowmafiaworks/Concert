@@ -9,8 +9,7 @@ namespace Courses.Models
     public class Ticket
     {
         public Guid Id { get; set; }
-        public Guid ConcertId { get; set; }
-        public string Place { get; set; } = String.Empty;
+        public Guid ConcertId { get; set; }        
         public DateTime Date { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
