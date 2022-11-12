@@ -14,6 +14,7 @@ namespace Courses.Models
         public string Description { get; set; } = String.Empty;
         public string Place { get; set; } = String.Empty;
         public int SeatsNumber { get; set; }
+        public Poster? Image { get; set; }
         public EventType EventType { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }

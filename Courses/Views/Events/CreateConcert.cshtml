@@ -7,7 +7,7 @@
 
 <h2>Create new Event</h2>
 
-<form asp-action="Create" asp-controller="Events" asp-antiforgery="true">
+<form asp-action="CreateConcert" asp-controller="Events" asp-antiforgery="true" enctype="multipart/form-data">
     <div>
         <p>
             <label asp-for="Title"></label><br />
@@ -28,6 +28,11 @@
         <p>
             <label asp-for="EventType"></label><br />
             <select asp-for="EventType" asp-items="Html.GetEnumSelectList<EventType>()"></select>
+        </p>
+
+        <p>
+            <label asp-for="Poster"></label><br />
+            <input type="file" asp-for="Poster" />
         </p>
         <p>
             <input type="submit" value="Create" />

@@ -12,6 +12,7 @@ namespace Courses.Data
     {
         public DbSet<Concert> Concerts { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<Poster> Posters { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options): base(options)
         {

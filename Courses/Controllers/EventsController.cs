@@ -18,12 +18,14 @@ namespace Courses.Controllers
         private readonly ILogger<EventsController> _logger;
         private readonly IMapper _mapper;
         private readonly ApplicationContext _context;
+        private readonly IWebHostEnvironment _environment;
 
-        public EventsController(ILogger<EventsController> logger, IMapper mapper, ApplicationContext context)
+        public EventsController(ILogger<EventsController> logger, IMapper mapper, ApplicationContext context, IWebHostEnvironment env)
         {
             _logger = logger;
             _mapper = mapper;
             _context = context;
+            _environment = env;
         }
 
         [HttpGet]
@@ -36,18 +38,27 @@ namespace Courses.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult CreateConcert()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateConcertViewModel viewModel)
+        public async Task<IActionResult> CreateConcert(CreateConcertViewModel viewModel)
         {
             var mapped = _mapper.Map<Concert>(viewModel);
             mapped.CreatedDate = DateTime.Now;
             mapped.UpdatedDate = mapped.CreatedDate;
+
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(viewModel.Poster.FileName);
+            var filePath = Path.Combine(_environment.WebRootPath, "posters/", fileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                viewModel.Poster.CopyTo(fileStream);
+            }
             await _context.Concerts.AddAsync(mapped);
+            await _context.Posters.AddAsync(new Poster { ConcertId = mapped.Id, Path = filePath , Concert = mapped});
             await _context.SaveChangesAsync();
             return Redirect("/Events/AddTickets/");
         }
@@ -83,5 +94,22 @@ namespace Courses.Controllers
             return Redirect("/Events/Index/");
         }
 
+        [HttpGet]
+        public IActionResult imageTest()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> imageTest(IFormFile img)
+        {
+            var fileName= Guid.NewGuid().ToString() + Path.GetExtension(img.FileName);
+
+            using (var fileStream = new FileStream(Path.Combine(_environment.WebRootPath,fileName), FileMode.Create))
+            {
+                await img.CopyToAsync(fileStream);
+            }
+            
+            return Redirect("Home/Index");
+        }
     }
 }

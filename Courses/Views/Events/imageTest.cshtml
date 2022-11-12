@@ -1,0 +1,10 @@
+﻿<div>
+    <h4>Single File Upload</h4>
+
+    @* The type of form needs to be multipart/form-data *@
+
+    <form asp-controller="Events" asp-action="imageTest" enctype="multipart/form-data" method="post">
+        <input type="file" name="img" />
+        <button type="submit">submit</button>
+    </form>
+</div>
