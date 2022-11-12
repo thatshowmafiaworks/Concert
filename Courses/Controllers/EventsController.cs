@@ -26,9 +26,9 @@ namespace Courses.Controllers
             _context = context;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
-            //TODO: add main page with concerts 
 
             var events = _context.Concerts.ToList();
             
