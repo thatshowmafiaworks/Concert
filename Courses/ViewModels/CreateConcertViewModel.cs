@@ -14,5 +14,7 @@ namespace Courses.ViewModels
         public string Description { get; set; } = String.Empty;
         public int SeatsNumber { get; set; }
         public EventType EventType { get; set; }
+
+        public IFormFile? Poster { get; set; } = null;
     }
 }
