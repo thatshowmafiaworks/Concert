@@ -95,23 +95,5 @@ namespace Courses.Controllers
             _context.SaveChanges();
             return Redirect("/Events/Index/");
         }
-
-        [HttpGet]
-        public IActionResult imageTest()
-        {
-            return View();
-        }
-        [HttpPost]
-        public async Task<IActionResult> imageTest(IFormFile img)
-        {
-            var fileName= Guid.NewGuid().ToString() + Path.GetExtension(img.FileName);
-
-            using (var fileStream = new FileStream(Path.Combine(_environment.WebRootPath,fileName), FileMode.Create))
-            {
-                await img.CopyToAsync(fileStream);
-            }
-            
-            return Redirect("Home/Index");
-        }
     }
 }
