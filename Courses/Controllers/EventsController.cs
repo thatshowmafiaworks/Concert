@@ -83,14 +83,16 @@ namespace Courses.Controllers
             mapped.CreatedDate = DateTime.Now;
             mapped.UpdatedDate = mapped.CreatedDate;
 
-            var seatsNumber = _context.Concerts.FirstOrDefault(item => item.Id == mapped.ConcertId).SeatsNumber;
+            var concert = _context.Concerts.FirstOrDefault(x => x.Id == mapped.ConcertId);
+            concert.SeatsNumber += viewModel.SeatsNumber;
+            _context.Concerts.Update(concert);
 
-            for(int i = 0; i < seatsNumber; i++)
+            for(int i = 0; i < viewModel.SeatsNumber; i++)
             {
                 mapped.Id = Guid.NewGuid();
                 _context.Tickets.Add(mapped);
-                _context.SaveChanges();
             }
+            _context.SaveChanges();
             return Redirect("/Events/Index/");
         }
 

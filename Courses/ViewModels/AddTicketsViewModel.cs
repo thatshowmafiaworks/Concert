@@ -15,5 +15,7 @@ namespace Courses.ViewModels
         public DateTime Day { get; set; }
         public DateTime Time { get; set; }
 
+        public int SeatsNumber { get; set; }
+
     }
 }
