@@ -12,7 +12,7 @@ namespace Courses.ViewModels
         public string Title { get; set; } = String.Empty;
         public string Artist { get; set; } = String.Empty;
         public string Description { get; set; } = String.Empty;
-        public int SeatsNumber { get; set; }
+        public string Place { get; set; } = String.Empty;
         public EventType EventType { get; set; }
 
         public IFormFile? Poster { get; set; } = null;
