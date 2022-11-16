@@ -9,6 +9,8 @@ namespace Courses.Models
     public class Ticket
     {
         public Guid Id { get; set; }
+        public Guid CreatedBy { get; set; }
+        public Guid Owner { get; set; }
         public Guid ConcertId { get; set; }        
         public DateTime Date { get; set; }
         public DateTime CreatedDate { get; set; }
