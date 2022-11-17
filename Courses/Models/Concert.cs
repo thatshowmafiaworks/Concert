@@ -20,6 +20,7 @@ namespace Courses.Models
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
         public Guid CreatedBy { get; set; }
+        public Guid UpdatedBy { get; set; }
         public List<Ticket> Tickets { get; set; } = new();
     }
 }

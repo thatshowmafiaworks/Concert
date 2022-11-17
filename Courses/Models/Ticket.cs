@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ namespace Courses.Models
     {
         public Guid Id { get; set; }
         public Guid CreatedBy { get; set; }
+        public Guid UpdatedBy { get; set; }
         public Guid Owner { get; set; }
         public Guid ConcertId { get; set; }        
         public DateTime Date { get; set; }

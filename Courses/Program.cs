@@ -53,7 +53,9 @@ else
     using (var scope = app.Services.CreateScope())
     {
 
-        scope.ServiceProvider.GetRequiredService<ApplicationContext>().Database.EnsureCreated();
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+
+        context.Database.EnsureCreated();
 
         string[] roles = { "Admin", "User", "Manager" };
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -65,6 +67,12 @@ else
                 await roleManager.CreateAsync(new IdentityRole(role));
             }
         }
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+        var admin = context.Users.FirstOrDefault(x => x.Id == "33505884-4a6a-47cb-88ad-afdee4e47cbc");
+        var manager = context.Users.FirstOrDefault(x => x.Id == "0ea6d8de-d7f2-4c54-b4a0-54b13db0e068");
+        await userManager.AddToRoleAsync(manager,"Manager");
+        await userManager.AddToRoleAsync(admin,"Admin");
+
     }
 }
 app.UseHttpsRedirection();
