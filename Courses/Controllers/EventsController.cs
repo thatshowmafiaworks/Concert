@@ -10,6 +10,8 @@ using Courses.Models;
 using Courses.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace Courses.Controllers
 {
@@ -19,13 +21,15 @@ namespace Courses.Controllers
         private readonly IMapper _mapper;
         private readonly ApplicationContext _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public EventsController(ILogger<EventsController> logger, IMapper mapper, ApplicationContext context, IWebHostEnvironment env)
+        public EventsController(ILogger<EventsController> logger, IMapper mapper, ApplicationContext context, IWebHostEnvironment env, UserManager<IdentityUser> userManager)
         {
             _logger = logger;
             _mapper = mapper;
             _context = context;
             _environment = env;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -38,17 +42,22 @@ namespace Courses.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles ="Admin,Manager")]
         public IActionResult CreateConcert()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> CreateConcert(CreateConcertViewModel viewModel)
         {
+            var currentUser = await _userManager.GetUserAsync(this.User);
             var mapped = _mapper.Map<Concert>(viewModel);
             mapped.CreatedDate = DateTime.Now;
             mapped.UpdatedDate = mapped.CreatedDate;
+            mapped.CreatedBy = new Guid(currentUser.Id);
+            mapped.UpdatedBy = new Guid(currentUser.Id);
 
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(viewModel.Poster.FileName);
             var filePath = Path.Combine(_environment.WebRootPath, "posters/", fileName);
@@ -64,6 +73,7 @@ namespace Courses.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Manager")]
         public IActionResult AddTickets()
         {
             var events = _context.Concerts.ToList();
@@ -72,12 +82,16 @@ namespace Courses.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddTickets(AddTicketsViewModel viewModel)
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> AddTickets(AddTicketsViewModel viewModel)
         {
             DateOnly day = DateOnly.FromDateTime(viewModel.Day);
             TimeOnly time = TimeOnly.FromDateTime(viewModel.Time);
 
             var mapped = _mapper.Map<Ticket>(viewModel);
+            var currentUser = await _userManager.GetUserAsync(this.User);
+            mapped.CreatedBy = new Guid(currentUser.Id);
+            mapped.UpdatedBy = new Guid(currentUser.Id);
 
             mapped.Date = day.ToDateTime(time);
             mapped.CreatedDate = DateTime.Now;
@@ -86,12 +100,14 @@ namespace Courses.Controllers
             var concert = _context.Concerts.FirstOrDefault(x => x.Id == mapped.ConcertId);
             concert.SeatsNumber += viewModel.SeatsNumber;
             _context.Concerts.Update(concert);
+            List<Ticket> ticketsToAdd = new List<Ticket>();
 
             for(int i = 0; i < viewModel.SeatsNumber; i++)
             {
-                mapped.Id = Guid.NewGuid();
-                _context.Tickets.Add(mapped);
+                mapped.Id = new Guid();
+                ticketsToAdd.Add(mapped);
             }
+            _context.Tickets.AddRange(ticketsToAdd);
             _context.SaveChanges();
             return Redirect("/Events/Index/");
         }
