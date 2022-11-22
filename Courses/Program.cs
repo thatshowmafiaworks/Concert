@@ -2,6 +2,7 @@ using Courses.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Google;
 using Courses;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,12 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<ApplicationContext>(options =>
 {
     options.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=courses;Trusted_Connection=True;");
+});
+var configuration = builder.Configuration;
+builder.Services.AddAuthentication().AddGoogle(options =>
+{
+    options.ClientId = configuration["Authentication:Google:ClientId"];
+    options.ClientSecret = configuration["Authentication:Google:ClientSecret"];
 });
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
@@ -32,6 +39,11 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
     .AddEntityFrameworkStores<ApplicationContext>();
 
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AtLeastManager", policy =>
+        policy.RequireRole("Admin","Manager"));
+});
 var app = builder.Build();
 
 
