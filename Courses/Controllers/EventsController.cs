@@ -42,14 +42,14 @@ namespace Courses.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles ="Admin,Manager")]
+        [Authorize(Policy = "AtLeastManager")]
         public IActionResult CreateConcert()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Manager")]
+        [Authorize(Policy = "AtLeastManager")]
         public async Task<IActionResult> CreateConcert(CreateConcertViewModel viewModel)
         {
             var currentUser = await _userManager.GetUserAsync(this.User);
@@ -73,7 +73,7 @@ namespace Courses.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Manager")]
+        [Authorize(Policy = "AtLeastManager")]
         public IActionResult AddTickets()
         {
             var events = _context.Concerts.ToList();
@@ -82,7 +82,7 @@ namespace Courses.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Manager")]
+        [Authorize(Policy ="AtLeastManager")]
         public async Task<IActionResult> AddTickets(AddTicketsViewModel viewModel)
         {
             DateOnly day = DateOnly.FromDateTime(viewModel.Day);
