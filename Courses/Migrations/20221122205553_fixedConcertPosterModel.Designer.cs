@@ -4,6 +4,7 @@ using Courses.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Courses.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20221122205553_fixedConcertPosterModel")]
+    partial class fixedConcertPosterModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,10 +48,6 @@ namespace Courses.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Place")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Poster")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -86,7 +84,8 @@ namespace Courses.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ConcertId");
+                    b.HasIndex("ConcertId")
+                        .IsUnique();
 
                     b.ToTable("Posters");
                 });
@@ -330,8 +329,8 @@ namespace Courses.Migrations
             modelBuilder.Entity("Courses.Models.Poster", b =>
                 {
                     b.HasOne("Courses.Models.Concert", "Concert")
-                        .WithMany()
-                        .HasForeignKey("ConcertId")
+                        .WithOne("Poster")
+                        .HasForeignKey("Courses.Models.Poster", "ConcertId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -402,6 +401,8 @@ namespace Courses.Migrations
 
             modelBuilder.Entity("Courses.Models.Concert", b =>
                 {
+                    b.Navigation("Poster");
+
                     b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618

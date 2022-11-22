@@ -1,7 +1,8 @@
 ﻿@model List<Concert>
 @foreach(var item in Model){
+    var poster = "/posters/" + item.Poster;
     <div class="card" style="width: 18rem">
-        <img class="card-img-top" src="">
+        <img class="card-img-top" src="@poster" alt="Card image cap">
         <div class="card-body">
             <h5 class="card-title">@item.Title</h5>
             <p class="card-text">@item.Description</p>

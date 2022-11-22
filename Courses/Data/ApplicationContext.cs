@@ -27,6 +27,10 @@ namespace Courses.Data
                 .HasOne(u => u.Concert)
                 .WithMany(c => c.Tickets)
                 .HasForeignKey(u => u.ConcertId);
+            //modelBuilder.Entity<Poster>()
+            //    .HasOne(u => u.Concert)
+            //    .WithOne(c => c.Poster)
+            //    .HasForeignKey<Poster>(u => u.ConcertId);
         }
     }
 }
