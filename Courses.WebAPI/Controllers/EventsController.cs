@@ -7,31 +7,54 @@ using System.Threading.Tasks;
 using Courses.Models;
 using Courses.Data;
 using AutoMapper;
+using Courses.ViewModels;
+using System.Security.Claims;
 
 namespace Courses.WebAPI.Controllers
 {
-    public class ApiController: ControllerBase
+
+    [Route("api/[controller]")]
+    public class EventsController : ControllerBase
     {
         private readonly ApplicationContext _context;
         private readonly IMapper _mapper;
-        public ApiController(ApplicationContext context, IMapper mapper) =>
-            (_context,_mapper) = (context, mapper);
+        public EventsController(ApplicationContext context, IMapper mapper) =>
+            (_context, _mapper) = (context, mapper);
 
-        public ActionResult<IEnumerable<Concert>> Events(int count, int page)
+
+        //get exact page
+        [HttpGet("{page}")]
+        public ActionResult<IEnumerable<Concert>> GetPage(int page)
         {
-            IEnumerable<Concert> events = new List<Concert>();
+            IEnumerable<Concert> events = _context.Concerts.OrderByDescending(x => x.CreatedDate).Skip(page * 10).Take(page).ToList();
 
             return Ok(events);
         }
 
-        public ActionResult<IEnumerable<Ticket>> Tickets()
-        {
-            IEnumerable<Concert> tickets = new List<Concert>();
 
-            return Ok(tickets);
+        //get exact Concert
+        [HttpGet("{id}")]
+        public ActionResult<Concert> Get(Guid id)
+        {
+            var concert = _context.Concerts.FirstOrDefault(x => x.Id == id);
+            if (concert == null) return NotFound();
+            return Ok(concert);
         }
 
-        
 
+        //create Concert
+        [HttpPost]
+        public async Task<ActionResult<Guid>> Create([FromBody] CreateConcertViewModel viewModel)
+        {
+            var concert = _mapper.Map<Concert>(viewModel);
+            concert.CreatedBy = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            concert.UpdatedBy = concert.CreatedBy;
+            concert.CreatedDate = DateTime.Now;
+            concert.UpdatedDate = concert.CreatedDate;
+
+            await _context.Concerts.AddAsync(concert);
+            await _context.
+            return Ok();
+        }
     }
 }
