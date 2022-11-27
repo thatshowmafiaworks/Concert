@@ -23,10 +23,10 @@ namespace Courses.WebAPI.Controllers
 
 
         //get exact page
-        [HttpGet("{page}")]
-        public ActionResult<IEnumerable<Concert>> GetPage(int page)
+        [HttpGet("{page}/{items}")]
+        public ActionResult<IEnumerable<Concert>> GetPage(int page, int items)
         {
-            IEnumerable<Concert> events = _context.Concerts.OrderByDescending(x => x.CreatedDate).Skip(page * 10).Take(page).ToList();
+            IEnumerable<Concert> events = _context.Concerts.OrderByDescending(x => x.CreatedDate).Skip(page * items).Take(items).ToList();
 
             return Ok(events);
         }
@@ -44,7 +44,7 @@ namespace Courses.WebAPI.Controllers
 
         //create Concert
         [HttpPost]
-        public async Task<ActionResult<Guid>> Create([FromBody] CreateConcertViewModel viewModel)
+        public async Task<ActionResult<Guid>> Create([FromBody]CreateConcertViewModel viewModel)
         {
             var concert = _mapper.Map<Concert>(viewModel);
             concert.CreatedBy = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -53,8 +53,39 @@ namespace Courses.WebAPI.Controllers
             concert.UpdatedDate = concert.CreatedDate;
 
             await _context.Concerts.AddAsync(concert);
-            await _context.
-            return Ok();
+            await _context.SaveChangesAsync();
+            return Ok(concert.Id);
+        }
+
+        //update
+        [HttpPut]
+        public async Task<ActionResult<Guid>> Update([FromBody] UpdateConcertViewModel viewModel)
+        {
+            var concert = _context.Concerts.FirstOrDefault(x => x.Id == viewModel.Id);
+            var update = _mapper.Map<Concert>(viewModel);
+            concert.Title = update.Title;
+            concert.Description = update.Description;
+            concert.Artist = update.Artist;
+            concert.Place = update.Place;
+            concert.EventType = update.EventType;
+            concert.UpdatedDate = DateTime.UtcNow;
+            concert.UpdatedBy = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(concert.Id);
+        }
+
+
+        //delete
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(Guid id)
+        {
+            var concert = _context.Concerts.FirstOrDefault(x => x.Id == id);
+
+            _context.Concerts.Remove(concert);
+            await _context.SaveChangesAsync();
+            return NoContent();
         }
     }
 }
