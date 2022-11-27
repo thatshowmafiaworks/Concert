@@ -54,20 +54,22 @@ namespace Courses.Controllers
         {
             var currentUser = await _userManager.GetUserAsync(this.User);
             var mapped = _mapper.Map<Concert>(viewModel);
+            mapped.Id = Guid.NewGuid();
             mapped.CreatedDate = DateTime.Now;
             mapped.UpdatedDate = mapped.CreatedDate;
             mapped.CreatedBy = new Guid(currentUser.Id);
             mapped.UpdatedBy = new Guid(currentUser.Id);
 
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(viewModel.Poster.FileName);
-            var filePath = Path.Combine(_environment.WebRootPath, "posters/", fileName);
+            var fileName = mapped.Id.ToString() + Path.GetExtension(viewModel.Poster.FileName);
+            var filePath = Path.Combine(_environment.WebRootPath, @"posters\", fileName);
+            mapped.Poster = fileName;
 
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
                 viewModel.Poster.CopyTo(fileStream);
             }
             await _context.Concerts.AddAsync(mapped);
-            await _context.Posters.AddAsync(new Poster { ConcertId = mapped.Id, Path = filePath , Concert = mapped});
+            //await _context.Posters.AddAsync(new Poster { ConcertId = mapped.Id, Path = filePath , Concert = mapped});
             await _context.SaveChangesAsync();
             return Redirect("/Events/AddTickets/");
         }
